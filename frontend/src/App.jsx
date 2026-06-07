@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { FiUser, FiSend } from 'react-icons/fi'
 
@@ -17,6 +17,7 @@ import LoginModal from './components/LoginModal'
 
 function MainLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)
   
@@ -42,7 +43,7 @@ function MainLayout() {
       <Sidebar />
 
       {/* 2. Main Right Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen relative pb-24 bg-surface/40">
+      <div className={`flex-1 flex flex-col min-w-0 min-h-screen relative bg-surface/40 ${location.pathname.startsWith('/chat') ? '' : 'pb-24'}`}>
         
         {/* Main Header (sketched dashboard title & login buttons) */}
         <header className="h-16 border-b border-surface-border flex items-center justify-between px-8 bg-surface/50 backdrop-blur-md sticky top-0 z-40">
@@ -90,24 +91,26 @@ function MainLayout() {
         </main>
 
         {/* 3. Global Docked Chat Input Bar (from hand-drawn sketch dashboard) */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-surface/40 backdrop-blur-md border-t border-surface-border/50">
-          <form onSubmit={handleGlobalChatSubmit} className="max-w-4xl mx-auto flex gap-2">
-            <input
-              type="text"
-              value={chatPrompt}
-              onChange={(e) => setChatPrompt(e.target.value)}
-              placeholder="Chat SRE bot directly... (e.g. Website is down, auth errors)"
-              className="flex-1 bg-surface-elevated/70 border border-surface-border text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-500/60 transition-colors shadow-inner"
-            />
-            <button
-              type="submit"
-              disabled={!chatPrompt.trim()}
-              className="w-12 h-12 bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:hover:bg-brand-600 rounded-xl flex items-center justify-center text-white transition-all shadow-md shadow-brand-600/10"
-            >
-              <FiSend size={16} />
-            </button>
-          </form>
-        </div>
+        {!location.pathname.startsWith('/chat') && (
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-surface/40 backdrop-blur-md border-t border-surface-border/50">
+            <form onSubmit={handleGlobalChatSubmit} className="max-w-4xl mx-auto flex gap-2">
+              <input
+                type="text"
+                value={chatPrompt}
+                onChange={(e) => setChatPrompt(e.target.value)}
+                placeholder="Chat SRE bot directly... (e.g. Website is down, auth errors)"
+                className="flex-1 bg-surface-elevated/70 border border-surface-border text-white text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-500/60 transition-colors shadow-inner"
+              />
+              <button
+                type="submit"
+                disabled={!chatPrompt.trim()}
+                className="w-12 h-12 bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:hover:bg-brand-600 rounded-xl flex items-center justify-center text-white transition-all shadow-md shadow-brand-600/10"
+              >
+                <FiSend size={16} />
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Optional Login overlay Modal */}
         <LoginModal

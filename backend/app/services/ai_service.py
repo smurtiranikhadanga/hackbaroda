@@ -352,7 +352,7 @@ def chat_with_agent(
             "diagnostic_card": card
         }
         
-    elif "website not opening" in msg_lower or "site won't open" in msg_lower or "not opening" in msg_lower:
+    elif "website not opening" in msg_lower or "site won't open" in msg_lower or "not opening" in msg_lower or "not working" in msg_lower or "website is down" in msg_lower or "site is down" in msg_lower:
         reply = (
             "### 🌐 Website Connectivity Diagnostic\n"
             "I can help you troubleshoot website reachability. Please check the following:\n\n"
@@ -400,7 +400,7 @@ Respond ONLY with a valid JSON block containing:
 }}"""
 
     try:
-        if settings.GEMINI_API_KEY or settings.OPENAI_API_KEY:
+        if settings.GEMINI_API_KEY or settings.OPENAI_API_KEY or settings.GROQ_API_KEY:
             raw = _call_llm(prompt)
             data = _extract_json(raw)
             if data:
@@ -422,7 +422,7 @@ Respond ONLY with a valid JSON block containing:
         logger.error("Conversational LLM chat failed: %s", e)
 
     # ── Conversational SRE Fallback ───────────────────────────────────────────
-    if any(keyword in msg_lower for keyword in ["down", "timeout", "outage", "crash", "error"]):
+    if any(keyword in msg_lower for keyword in ["down", "timeout", "outage", "crash", "error"]) or "not working" in msg_lower:
         reply = (
             "### ⚠️ Outage Detected via Chat\n"
             "It sounds like there is an active service disruption or technical outage. "

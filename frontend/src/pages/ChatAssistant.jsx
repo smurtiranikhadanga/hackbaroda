@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   FiSend, FiMessageSquare, FiAlertCircle, FiCheck, FiX, FiActivity,
   FiClock, FiShield, FiHelpCircle, FiPlay, FiCpu, FiTerminal,
@@ -60,6 +60,19 @@ function AutofixTerminal({ logs, onComplete }) {
 
 export default function ChatAssistant() {
   const location = useLocation()
+  const navigate = useNavigate()
+
+  // Basic inline parser to render bold text
+  const parseInlineMarkdown = (text) => {
+    if (!text) return ''
+    const parts = text.split(/(\*\*.*?\*\*)/g)
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="text-white font-bold">{part.slice(2, -2)}</strong>
+      }
+      return part
+    })
+  }
 
   const [messages, setMessages] = useState([
     {
@@ -94,6 +107,8 @@ export default function ChatAssistant() {
     const initialQuery = params.get('q')
     if (initialQuery) {
       handleSend(null, initialQuery)
+      // Clear query params to keep URL clean and prevent double-triggering
+      navigate('/chat', { replace: true })
     }
   }, [location.search])
 
@@ -416,12 +431,32 @@ export default function ChatAssistant() {
                   }`}>
                     {m.content.split('\n').map((line, idx) => {
                       if (line.startsWith('### ')) {
-                        return <h3 key={idx} className="font-bold text-white text-sm mt-3 mb-1">{line.slice(4)}</h3>
+                        return <h3 key={idx} className="font-bold text-white text-sm mt-3 mb-1.5">{parseInlineMarkdown(line.slice(4))}</h3>
                       }
-                      if (line.startsWith('- **') || line.startsWith('* **')) {
-                        return <p key={idx} className="text-brand-300 font-mono text-[11px] my-1 ml-2">{line}</p>
+                      
+                      // Match bullet points starting with - or * (with or without bold tags)
+                      const bulletMatch = line.match(/^[-*]\s+(.*)$/)
+                      if (bulletMatch) {
+                        return (
+                          <div key={idx} className="flex items-start gap-2 my-1 ml-2 font-medium">
+                            <span className="text-brand-400 font-bold select-none">•</span>
+                            <span className="text-slate-300">{parseInlineMarkdown(bulletMatch[1])}</span>
+                          </div>
+                        )
                       }
-                      return <p key={idx} className="mb-1">{line}</p>
+                      
+                      // Match numbered lists like 1. , 2. 
+                      const numMatch = line.match(/^(\d+)\.\s+(.*)$/)
+                      if (numMatch) {
+                        return (
+                          <div key={idx} className="flex items-start gap-2 my-1 ml-2 font-medium">
+                            <span className="text-brand-400 font-mono font-bold select-none">{numMatch[1]}.</span>
+                            <span className="text-slate-300">{parseInlineMarkdown(numMatch[2])}</span>
+                          </div>
+                        )
+                      }
+                      
+                      return <p key={idx} className="mb-1">{parseInlineMarkdown(line)}</p>
                     })}
                   </div>
                 )}

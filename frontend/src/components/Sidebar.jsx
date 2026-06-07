@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   FiMenu, FiSearch, FiPlusSquare, FiMessageSquare,
   FiClock, FiBell, FiInfo, FiSettings, FiUser,
-  FiChevronDown, FiChevronUp, FiShield
+  FiChevronDown, FiChevronUp, FiShield, FiGrid
 } from 'react-icons/fi'
 
 export default function Sidebar({ notificationsCount = 2 }) {
@@ -30,6 +30,19 @@ export default function Sidebar({ notificationsCount = 2 }) {
 
       {/* Sidebar Links */}
       <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+        {/* 0. Dashboard */}
+        <Link
+          to="/"
+          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-all text-sm font-medium ${
+            isActive('/')
+              ? 'bg-brand-600/20 text-brand-300 border border-brand-500/30'
+              : 'hover:bg-surface/50 hover:text-white text-slate-400'
+          }`}
+        >
+          <FiGrid size={18} />
+          <span>Dashboard</span>
+        </Link>
+
         {/* 1. Search Incident */}
         <div>
           <button

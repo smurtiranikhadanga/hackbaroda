@@ -127,6 +127,28 @@ def main():
         print("Suggested Incident Data drafted by bot:")
         print(json.dumps(chat_res3.get("suggested_incident_data"), indent=2))
         
+        print("\n--- 11. Testing Web Service Scanner ---")
+        scan_req = {
+            "url": "http://api.mycompany.com/db"
+        }
+        scan_res = make_post(f"{base_url}/api/ai/scan", scan_req)
+        print("Scanner Results (Troubleshooter type):")
+        print(scan_res.get("troubleshooter_type"))
+        print("Complexity & Severity:")
+        print(f"{scan_res.get('complexity')} / {scan_res.get('severity')}")
+        print("Probability Analysis:")
+        print(json.dumps(scan_res.get("root_cause_analysis"), indent=2))
+        
+        print("\n--- 12. Testing Web Service Auto-Fixer ---")
+        fix_req = {
+            "url": "http://api.mycompany.com/db"
+        }
+        fix_res = make_post(f"{base_url}/api/ai/autofix", fix_req)
+        print("Auto-Fixer Status:")
+        print(fix_res.get("status"))
+        print("Resolution logs count:")
+        print(len(fix_res.get("autodiagnostic_log")))
+        
         print("\n[SUCCESS] ALL TESTS COMPLETED SUCCESSFULLY! SYSTEM IS 100% OPERATIONAL.")
 
     except Exception as e:
@@ -135,3 +157,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

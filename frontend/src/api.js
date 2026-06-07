@@ -23,6 +23,9 @@ export const getStats = () => api.get('/ai/stats')
 export const getKnowledgeGraph = () => api.get('/ai/knowledge-graph')
 export const sendChatMessage = (message, history = [], incidentId = null) => 
   api.post('/ai/chat', { message, history, incident_id: incidentId })
+export const scanUrl = (url) => api.post('/ai/scan', { url })
+export const autofixUrl = (url) => api.post('/ai/autofix', { url })
+
 
 // ── Reports ───────────────────────────────────────────────────────────────────
 export const getPostmortem = (id) => api.get(`/reports/${id}`)

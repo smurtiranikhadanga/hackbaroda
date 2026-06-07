@@ -82,10 +82,42 @@ class ChatRequest(BaseModel):
     history: List[ChatMessage] = []
 
 
+class ScanRequest(BaseModel):
+    url: str
+
+
+class ScanResponse(BaseModel):
+    url: str
+    troubleshooter_type: str
+    severity: str
+    complexity: str
+    status: str
+    issues_found: List[str]
+    root_cause_analysis: List[Dict[str, Any]]  # [{"cause": str, "probability": float}]
+    steps: List[str]
+    quick_fixes: List[str]
+    autodiagnostic_log: List[Dict[str, Any]]  # [{"time": str, "step": str, "result": str}]
+    similar_incidents: List[Dict[str, Any]]  # [{"incident_id": str, "title": str, "resolution": str}]
+
+
+class AutofixRequest(BaseModel):
+    url: str
+
+
+class AutofixResponse(BaseModel):
+    url: str
+    status: str
+    autodiagnostic_log: List[Dict[str, Any]]  # [{"time": str, "step": str, "result": str}]
+    complexity: str
+    fixed_issue: str
+    severity: str
+
+
 class ChatResponse(BaseModel):
     reply: str
     resolved_by_bot: bool = False
     suggested_incident_data: Optional[Dict[str, Any]] = None
+    diagnostic_card: Optional[ScanResponse] = None
 
 
 # ── Request schemas ───────────────────────────────────────────────────────────

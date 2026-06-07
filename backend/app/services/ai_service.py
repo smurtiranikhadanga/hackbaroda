@@ -20,7 +20,7 @@ def _call_gemini(prompt: str) -> str:
     import google.generativeai as genai
 
     genai.configure(api_key=settings.GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
     response = model.generate_content(prompt)
     return response.text
 

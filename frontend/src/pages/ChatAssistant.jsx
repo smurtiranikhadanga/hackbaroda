@@ -101,11 +101,14 @@ export default function ChatAssistant() {
     scrollToBottom()
   }, [messages, loading])
 
+  const queryProcessedRef = useRef(false)
+
   // Handle query parameter passed from global chat input bar
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const initialQuery = params.get('q')
-    if (initialQuery) {
+    if (initialQuery && !queryProcessedRef.current) {
+      queryProcessedRef.current = true
       handleSend(null, initialQuery)
       // Clear query params to keep URL clean and prevent double-triggering
       navigate('/chat', { replace: true })

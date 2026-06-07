@@ -7,9 +7,10 @@ from typing import Literal
 
 class Settings(BaseSettings):
     # AI Provider
-    AI_PROVIDER: Literal["gemini", "openai"] = "gemini"
+    AI_PROVIDER: Literal["gemini", "openai", "groq"] = "gemini"
     GEMINI_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
 
     # Database
     DATABASE_URL: str = "postgresql://incident_user:incident_pass@localhost:5432/incidents"

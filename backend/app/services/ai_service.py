@@ -47,22 +47,73 @@ def _call_openai(prompt: str) -> str:
     return response.choices[0].message.content
 
 
+def _call_groq(prompt: str) -> str:
+    """Send a prompt to Groq (using OpenAI client wrapper) and return response."""
+    from openai import OpenAI
+    
+    client = OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=settings.GROQ_API_KEY
+    )
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an expert SRE and incident management AI assistant. "
+                    "Always respond with valid JSON as requested."
+                ),
+            },
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.2,
+    )
+    return response.choices[0].message.content
+
+
 def _call_llm(prompt: str) -> str:
     """Route to configured AI provider with fallback."""
-    if settings.AI_PROVIDER == "gemini" and settings.GEMINI_API_KEY:
+    provider = settings.AI_PROVIDER
+    
+    if provider == "groq" and settings.GROQ_API_KEY:
+        try:
+            return _call_groq(prompt)
+        except Exception as e:
+            logger.warning("Groq failed (%s), falling back to Gemini", e)
+            provider = "gemini"
+            
+    if provider == "gemini" and settings.GEMINI_API_KEY:
         try:
             return _call_gemini(prompt)
         except Exception as e:
             logger.warning("Gemini failed (%s), falling back to OpenAI", e)
-            if settings.OPENAI_API_KEY:
-                return _call_openai(prompt)
+            provider = "openai"
+            
+    if provider == "openai" and settings.OPENAI_API_KEY:
+        try:
+            return _call_openai(prompt)
+        except Exception as e:
+            logger.warning("OpenAI failed: %s", e)
             raise
-    elif settings.OPENAI_API_KEY:
+            
+    # Dynamic fallback check: try any provider that is configured
+    if settings.GROQ_API_KEY:
+        try:
+            return _call_groq(prompt)
+        except Exception:
+            pass
+    if settings.GEMINI_API_KEY:
+        try:
+            return _call_gemini(prompt)
+        except Exception:
+            pass
+    if settings.OPENAI_API_KEY:
         return _call_openai(prompt)
-    else:
-        raise RuntimeError(
-            "No AI provider configured. Set GEMINI_API_KEY or OPENAI_API_KEY in .env"
-        )
+        
+    raise RuntimeError(
+        "No AI provider configured. Set GEMINI_API_KEY, OPENAI_API_KEY, or GROQ_API_KEY in .env"
+    )
 
 
 def _extract_json(text: str) -> Any:

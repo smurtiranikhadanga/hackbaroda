@@ -77,7 +77,7 @@ export default function ChatAssistant() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I am your AI SRE Support Agent. I can help troubleshoot common issues (like login lockouts or site connectivity problems) or query historical incident solutions. How can I assist you today?'
+      content: 'Hello! I am **Incident Mind AI**, your SRE Support Agent. I remember past incidents, root causes, mitigation strategies, and resolution processes, and leverage these previous experiences to recommend solutions when similar incidents occur. How can I assist you today?'
     }
   ])
   const [input, setInput] = useState('')

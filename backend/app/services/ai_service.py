@@ -10,6 +10,7 @@ import re
 from typing import List, Dict, Optional, Any
 
 from app.config import settings
+from app.services.vector_service import find_similar_incidents
 
 logger = logging.getLogger(__name__)
 
@@ -378,13 +379,31 @@ def chat_with_agent(
             content = h.get("content", "")
             history_context += f"- {role.capitalize()}: {content}\n"
 
+    # ── Retrieve Similar Past Incidents from Vector Memory ───────────────────
+    similar_context = ""
+    try:
+        similar_cases = find_similar_incidents(title=message, symptoms="", n_results=3)
+        if similar_cases:
+            similar_context = "\nMatching Historical Incidents from Vector Memory:\n"
+            for case in similar_cases:
+                similar_context += (
+                    f"- Incident ID: {case['incident_id']}\n"
+                    f"  Title: {case['title']}\n"
+                    f"  Similarity Score: {case['similarity']*100:.1f}%\n"
+                    f"  Actual Root Cause: {case['cause'] or 'Unknown'}\n"
+                    f"  Resolution Applied: {case['actual_fix'] or 'Not resolved'}\n\n"
+                )
+    except Exception as ex:
+        logger.warning("Failed to fetch historical incidents for chatbot prompt: %s", ex)
+
     prompt = f"""You are the Incident Mind AI SRE Agent. A user is talking to you in a chat box.
-User Message: "{message}"{history_context}
+User Message: "{message}"{history_context}{similar_context}
 
 If the user is describing a system crash, outage, or technical incident (e.g. timeout, service down, 503 errors):
-1. Give a summary of the likely problem and mention that similar past incidents exist.
-2. Recommend the best fix and predicted recovery time.
-3. Suggest creating a formal incident ticket, providing a JSON draft with 'title', 'symptoms', and 'engineer'.
+1. Give a summary of the likely problem, referencing the matching historical incidents from vector memory if they are highly relevant.
+2. Recommend the best fix based on the resolutions applied in those past incidents.
+3. Recommend predicted recovery time.
+4. Suggest creating a formal incident ticket, providing a JSON draft with 'title', 'symptoms', and 'engineer'.
 
 If they are chatting casually or troubleshooting normal items, respond in a friendly conversational SRE manner.
 

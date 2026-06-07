@@ -61,7 +61,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-white">
             Incident Mind AI <span className="gradient-text">Console</span>
           </h1>
-          <p className="text-slate-400 text-xs mt-1">SRE telemetry, automated clustering, and vector memory</p>
+          <p className="text-slate-400 text-xs mt-1">An intelligent SRE agent that remembers past incidents, root causes, mitigation strategies, and resolution processes to recommend solutions when similar incidents occur.</p>
         </div>
         <button
           onClick={loadData}

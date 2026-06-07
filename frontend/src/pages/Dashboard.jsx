@@ -59,7 +59,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between mb-8 animate-fade-in">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Incident Management <span className="gradient-text">Console</span>
+            Incident Mind AI <span className="gradient-text">Console</span>
           </h1>
           <p className="text-slate-400 text-xs mt-1">SRE telemetry, automated clustering, and vector memory</p>
         </div>

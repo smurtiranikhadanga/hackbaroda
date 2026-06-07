@@ -378,7 +378,7 @@ def chat_with_agent(
             content = h.get("content", "")
             history_context += f"- {role.capitalize()}: {content}\n"
 
-    prompt = f"""You are an SRE Intelligence Agent. A user is talking to you in a chat box.
+    prompt = f"""You are the Incident Mind AI SRE Agent. A user is talking to you in a chat box.
 User Message: "{message}"{history_context}
 
 If the user is describing a system crash, outage, or technical incident (e.g. timeout, service down, 503 errors):
@@ -445,7 +445,7 @@ Respond ONLY with a valid JSON block containing:
         }
 
     return {
-        "reply": f"Hi! I am your SRE Intelligence Chatbot. I can help diagnose login issues, website outages, or retrieve past incident resolutions. How can I help you?",
+        "reply": f"Hi! I am your Incident Mind AI Chatbot. I can help diagnose login issues, website outages, or retrieve past incident resolutions. How can I help you?",
         "resolved_by_bot": False,
         "suggested_incident_data": None,
         "diagnostic_card": None

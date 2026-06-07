@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="AI Incident Management System",
+    title="Incident Mind AI",
     description=(
         "Intelligent incident management platform combining vector memory, "
         "LLM-powered analysis, and a learning loop."
@@ -49,7 +49,7 @@ app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 @app.get("/", tags=["Health"])
 async def root():
     return {
-        "message": "AI Incident Management System",
+        "message": "Incident Mind AI",
         "version": "1.0.0",
         "environment": settings.ENVIRONMENT,
         "ai_provider": settings.AI_PROVIDER,

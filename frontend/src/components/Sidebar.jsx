@@ -23,7 +23,7 @@ export default function Sidebar({ notificationsCount = 2 }) {
           <FiShield className="text-white" size={16} />
         </div>
         <div>
-          <span className="font-bold text-white tracking-wide block">SRE Agent</span>
+          <span className="font-bold text-white tracking-wide block">Incident Mind AI</span>
           <span className="text-xs text-slate-500 font-mono">v1.1.0-MVP</span>
         </div>
       </div>
